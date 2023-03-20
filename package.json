@@ -1,0 +1,20 @@
+{
+  "name": "impulse-invaders",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GIjack2001/Impulse-Invaders.git"
+  },
+  "author": "Vincent Jacquemin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GIjack2001/Impulse-Invaders/issues"
+  },
+  "homepage": "https://github.com/GIjack2001/Impulse-Invaders#readme"
+}
