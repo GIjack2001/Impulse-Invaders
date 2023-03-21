@@ -18,3 +18,9 @@ body {
   position: absolute;
   bottom: 0;
 }
+.shot {
+  width: 2px;
+  height: 10px;
+  background-color: white;
+  position: absolute;
+}
