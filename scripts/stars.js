@@ -1,6 +1,5 @@
-export default class Meteor {
-  constructor(url, x, y) {
-    this.url = url;
+export default class Star {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
   }
