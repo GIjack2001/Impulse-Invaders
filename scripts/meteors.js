@@ -6,7 +6,7 @@ export default class Meteor {
   }
   toscreen() {
     const board = document.getElementById('board');
-    const meteor = document.createElement('img');
+    const meteor = document.createElement('div');
     meteor.setAttribute('class', 'meteor');
     meteor.setAttribute('id', `meteor${this.key}`);
     meteor.style.left = this.x + 'px';

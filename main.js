@@ -10,7 +10,7 @@ const meteors = {};
 const stars = {};
 export default stars;
 
-let lives = 3;
+let lives = 1;
 let missileCounter = 0;
 let score = 0;
 
@@ -65,87 +65,120 @@ addEventListener('keydown', (e) => {
   }
 });
 
-//game refresher function
-const updateObjects = window.setInterval(() => {
-  //create stars to give impression of movment
-  functions.star(BOARD_HEIGHT, BOARD_WIDTH);
+const play = () => {
+  //game refresher function
+  const updateObjects = window.setInterval(() => {
+    //create stars to give impression of movment
+    functions.star(BOARD_HEIGHT, BOARD_WIDTH);
 
-  if (Object.keys(missiles).length !== 0) {
-    console.log('hello');
-    for (const shot of Object.keys(missiles)) {
-      missiles[shot].update();
-      // check if missile hits border
-      if (missiles[shot].y >= BOARD_HEIGHT) {
-        document
-          .getElementById('board')
-          .removeChild(document.getElementById(`missile${shot}`));
-        delete missiles[shot];
-      }
-    }
-  }
-  if (Object.keys(meteors).length !== 0) {
-    for (const meteor of Object.keys(meteors)) {
-      meteors[meteor].update();
-      // check if meteor hits border
-      if (meteors[meteor].y <= 0) {
-        lives--;
-        console.log('lives ' + lives);
-        if (lives === 0) {
-          clearInterval(updateObjects);
-          functions.gameOver(score);
-        }
-        document
-          .getElementById('board')
-          .removeChild(document.getElementById(`meteor${meteor}`));
-        delete meteors[meteor];
-      }
-      // check if missile hits meteor
+    if (Object.keys(missiles).length !== 0) {
+      console.log('hello');
       for (const shot of Object.keys(missiles)) {
-        if (
-          missiles[shot].y >= meteors[meteor].y &&
-          missiles[shot].y < meteors[meteor].y + 50 &&
-          missiles[shot].x >= meteors[meteor].x - 50 &&
-          missiles[shot].x <= meteors[meteor].x
-        ) {
-          score++;
-          console.log(
-            'hit - missile y ' +
-              missiles[shot].x +
-              '  meteor y ' +
-              meteors[meteor].x
-          );
-          console.log('stars ' + Object.keys(stars).length);
-          //delete missile and meteor from object and board
+        missiles[shot].update();
+        // check if missile hits border
+        if (missiles[shot].y >= BOARD_HEIGHT) {
           document
             .getElementById('board')
             .removeChild(document.getElementById(`missile${shot}`));
           delete missiles[shot];
-          document
-            .getElementById('board')
-            .removeChild(document.getElementById(`meteor${meteor}`));
-
-          delete meteors[meteor];
-          console.log('new missiles ' + JSON.stringify(missiles));
-          console.log('new meteors ' + JSON.stringify(meteors));
         }
       }
     }
-  }
-}, 30);
+    if (Object.keys(meteors).length !== 0) {
+      for (const meteor of Object.keys(meteors)) {
+        meteors[meteor].update();
+        // check if meteor hits border
+        if (meteors[meteor].y <= 0) {
+          lives--;
+          console.log('lives ' + lives);
+          if (lives === 0) {
+            clearInterval(updateObjects);
+            functions.gameOver(score);
+            //set up restart functionality
+            const restart = document.getElementById('restart');
+            restart.addEventListener('click', () => {
+              board.removeChild(document.getElementById('killScreen'));
+              lives = 1;
+              missileCounter = 0;
+              score = 0;
+              const allMissiles = board.getElementsByClassName('shot');
+              const allMeteors = board.getElementsByClassName('meteor');
+              while (allMissiles[0]) {
+                allMissiles[0].parentNode.removeChild(allMissiles[0]);
+              }
+              while (allMeteors[0]) {
+                allMeteors[0].parentNode.removeChild(allMeteors[0]);
+              }
+              Object.keys(missiles).forEach((key) => delete missiles[key]);
+              Object.keys(meteors).forEach((key) => delete meteors[key]);
+              play();
+            });
+          }
+          document
+            .getElementById('board')
+            .removeChild(document.getElementById(`meteor${meteor}`));
+          delete meteors[meteor];
+        }
+        // check if missile hits meteor
+        for (const shot of Object.keys(missiles)) {
+          if (
+            missiles[shot].y >= meteors[meteor].y &&
+            missiles[shot].y < meteors[meteor].y + 50 &&
+            missiles[shot].x >= meteors[meteor].x - 50 &&
+            missiles[shot].x <= meteors[meteor].x
+          ) {
+            score++;
+            console.log(
+              'hit - missile y ' +
+                missiles[shot].x +
+                '  meteor y ' +
+                meteors[meteor].x
+            );
+            console.log('stars ' + Object.keys(stars).length);
+            //delete missile and meteor from object and board
+            document
+              .getElementById('board')
+              .removeChild(document.getElementById(`missile${shot}`));
+            delete missiles[shot];
+            document
+              .getElementById('board')
+              .removeChild(document.getElementById(`meteor${meteor}`));
 
-let PACE = 100;
-const generateMeteors = window.setInterval(() => {
-  if (lives === 0) {
-    clearInterval(generateMeteors);
-  }
-  console.log('Meteor incoming!');
-  const newMeteor = new Meteor(
-    'https://assets.website-files.com/5cfa0a3c809181819a5fd8c2/60814ef1cc0a9e60933fcdfc_Atom%20%20Cookie%20%20Illu.svg',
-    Math.floor(Math.random() * (BOARD_WIDTH - 50)),
-    BOARD_HEIGHT
-  );
-  const key = meteorCreator(newMeteor);
-  newMeteor.key = key;
-  newMeteor.toscreen();
-  console.log(meteors);
-}, PACE * 50);
+            delete meteors[meteor];
+            console.log('new missiles ' + JSON.stringify(missiles));
+            console.log('new meteors ' + JSON.stringify(meteors));
+          }
+        }
+      }
+    }
+  }, 30);
+
+  let PACE = 50;
+  let varpace = 50;
+  const generateMeteors = window.setInterval(() => {
+    // varpace = Math.floor(Math.random() * (65 - 10) + 10);
+    if (lives === 0) {
+      clearInterval(generateMeteors);
+    }
+    console.log('Meteor incoming!');
+    const newMeteor = new Meteor(
+      'https://assets.website-files.com/5cfa0a3c809181819a5fd8c2/60814ef1cc0a9e60933fcdfc_Atom%20%20Cookie%20%20Illu.svg',
+      Math.floor(Math.random() * (BOARD_WIDTH - 50)),
+      BOARD_HEIGHT
+    );
+    const key = meteorCreator(newMeteor);
+    newMeteor.key = key;
+    newMeteor.toscreen();
+    console.log(meteors);
+  }, PACE * varpace);
+};
+
+functions.startGame();
+const start = document.getElementById('start');
+start.addEventListener('click', () => {
+  board.removeChild(document.getElementById('killScreen'));
+  lives = 1;
+  missileCounter = 0;
+  score = 0;
+  play();
+});
